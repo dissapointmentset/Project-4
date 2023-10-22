@@ -1,18 +1,13 @@
-﻿#include <stdio.h>
-#include <conio.h>
+﻿#pragma once
+
+#include <stdio.h>
 #include <string.h>
+
 struct Item
 {
 	char name[50];
 	int cost;
-	void inititem(char s[50], int a);
 };
-void Item::inititem(char s[50], int a) {
-	strcpy(name, s);
-	cost = a;
-};
-
-
 struct compose
 {
 	Item *a;
@@ -23,8 +18,13 @@ struct compose
 struct sold
 {
 	Item a;
-	int b;
+	int kolvo;
 	void initsold(Item a, int b);
+};
+struct resource
+{
+	int key, kolvo;
+	char name[50];
 };
 struct action
 {
@@ -32,7 +32,6 @@ struct action
 	void initdel(resource a, int b);
 	void initsup(resource a, int b);
 }; 
-struct resource
-{
-	int key, kolvo;
-};
+Item inititem(char name[50], int cost);
+resource initresource(char name[50], int key, int kolvo);
+sold initsold(Item a, int kolvo);

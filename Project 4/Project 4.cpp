@@ -13,7 +13,6 @@ struct compose
 	Item *a;
 	int colvo;
 	int sostav[];
-	void initcompose(Item *m, int a, int mas[20]);
 }; 
 struct sold
 {
@@ -35,3 +34,6 @@ struct action
 Item inititem(char name[50], int cost);
 resource initresource(char name[50], int key, int kolvo);
 sold initsold(Item a, int kolvo);
+action initdel(resource a, int b);
+action initsup(resource a, int b);
+compose initcompose(Item* m, int a, int mas[20]);

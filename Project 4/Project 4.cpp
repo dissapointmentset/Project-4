@@ -6,34 +6,37 @@
 struct Item
 {
 	char name[50];
-	int cost;
+	unsigned int cost;
 };
 struct compose
 {
-	Item *a;
-	int colvo;
-	int sostav[];
+	Item *p;
+	resource m[50];
+	unsigned int n[50];
 }; 
 struct sold
 {
 	Item a;
-	int kolvo;
-	void initsold(Item a, int b);
+	unsigned int kolvo;
 };
 struct resource
 {
-	int key, kolvo;
 	char name[50];
+	unsigned int kolvo;
 };
 struct action
 {
-	resource a;
-	void initdel(resource a, int b);
-	void initsup(resource a, int b);
+	resource a[50];
+	unsigned int n;
+	bool f;	
 }; 
-Item inititem(char name[50], int cost);
-resource initresource(char name[50], int key, int kolvo);
-sold initsold(Item a, int kolvo);
-action initdel(resource a, int b);
-action initsup(resource a, int b);
-compose initcompose(Item* m, int a, int mas[20]);
+Item inititem(char name[50], unsigned int cost);
+resource initresource(unsigned int kolvo);
+sold initsold(Item a, unsigned int kolvo);
+action initaction(resource a, unsigned int b, bool f);
+compose initcompose(Item* p, resource m[], unsigned int n[]);
+void showres(unsigned int n, resource m[]);
+void showmenu(Item m[]);
+void acthist(action m[]);
+void showsost(Item *p);
+void solddata(sold m[]);

@@ -40,3 +40,5 @@ void showmenu(Item m[]);
 void acthist(action m[]);
 void showsost(Item *p);
 void solddata(sold m[]);
+int getprice(Item a);
+

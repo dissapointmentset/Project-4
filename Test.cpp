@@ -28,8 +28,9 @@ int main() {
 	cappuchino_big.setitem("cappuchino_big", 180, &capuch_big, &menu);
 	cappuchino_small.setitem("cappuchino_small", 100, &capuch_small, &menu);
 	americano.setitem("americano", 120, &amer, &menu);
-	cout << milk.showres();
+	cout << milk.showres(); cout << "\n";
 	cout << cappuchino_big.showsost();
+	cout << "\n";
 	cappuchino_big.costchange(220);
 	cappuchino_big.sostdel(1);
 	cappuchino_big.sostadd(sirop, 0.03);
@@ -41,6 +42,7 @@ int main() {
 	two.setsold(americano, 7, &soldhist);
 	cout<<one.soldinfo(soldhist);
 	cout << milk.showres();
+	cout << "\n";
 
 	action first, second;
 	first.setaction(milk, 2, 0, &actions);

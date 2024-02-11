@@ -35,10 +35,10 @@ public:
 		sklad->push_back(this);
 	}
 	void reducekol(double a) {
-		kolvo -= a;
+		this->kolvo -= a;
 	}
 	void upkol(double a) {
-		kolvo += a;
+		this->kolvo += a;
 	}
 };
 

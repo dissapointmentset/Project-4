@@ -17,22 +17,20 @@ public:
 	unsigned int getkol() {
 		return kolvo;
 	}
-	void setresource(string imya, double kolich, vector <resource*> *sklad) {
+	void setresource(string imya, double kolich) {
 		name = imya;
 		kolvo = kolich;
-		sklad->push_back(this);
 	}
 	string showres() {
 		string outp;
 		outp = this->name + " : " + to_string(this->kolvo) + "\n";
 		return outp;
 	}	
-	void consresinit(vector <resource*> *sklad) {
+	void consresinit() {
 		cout << "Input resource name:";
 		cin >> this->name;
 		cout << "Input resource quantity:";
 		cin >> this->kolvo;
-		sklad->push_back(this);
 	}
 	void reducekol(double a) {
 		this->kolvo -= a;
@@ -72,11 +70,10 @@ private:
 	unsigned int cost;
 	compose sost;
 public:
-	void setitem(string imya, unsigned int price, compose *n, vector <Item*> *menu) {
+	void setitem(string imya, unsigned int price, compose *n) {
 		name = imya;
 		cost = price;
 		sost = *n;
-		menu->push_back(this);   
 	}
 	string showsost() {
 		string outp="";
@@ -136,7 +133,7 @@ class action
 {
 private:
 	resource res;
-	int kolvo;
+	double kolvo;
 	int f;
 public:
 	int getacttype() { return f; }

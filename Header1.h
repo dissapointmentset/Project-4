@@ -43,10 +43,10 @@ public:
 class compose
 {
 public:
-	vector <resource> sost;
+	vector <resource*> sost;
 	unsigned int k;
 	vector <double> n;
-	void setcompose(vector <resource> cons, vector <double> m) {
+	void setcompose(vector <resource*> cons, vector <double> m) {
 		int i = 0;
 		for (i; i < cons.size(); i++) {
 			sost.push_back(cons[i]);
@@ -70,30 +70,30 @@ private:
 	unsigned int cost;
 	compose sost;
 public:
-	void setitem(string imya, unsigned int price, compose *n) {
-		name = imya;
-		cost = price;
-		sost = *n;
+	void setitem(string imya, unsigned int price, compose n) {
+		this->name = imya;
+		this->cost = price;
+		this->sost = n;
 	}
 	string showsost() {
 		string outp="";
 		for (int i = 0; i < this->sost.n.size(); i++) {
-			outp += (this->sost.sost[i].getname() + ": " + to_string(this->sost.n[i]) + "\n");
+			outp += (this->sost.sost[i]->getname() + ": " + to_string(this->sost.n[i]) + "\n");
 		}return outp;
 	}
 	unsigned int getcost() {
-		return this->cost;
+		return cost;
 	}
 	string getname() {
 		return name;
 	}
-	compose* getsost() {
-		return &sost;
+	compose getsost() {
+		return sost;
 	}
 	void costchange(unsigned int b) {
 		cost = b;
 	}
-	void sostadd( resource res, double k) {
+	void sostadd( resource *res, double k) {
 		this->sost.sost.push_back(res);
 		this->sost.n.push_back(k);
 		this->sost.uplen();
@@ -113,13 +113,13 @@ private:
 	unsigned int kolvo;
 	int profit;
 public:
-	void setsold(Item coffee, unsigned int kolich, vector <sold> *soldhist) {
-		item = coffee;
-		kolvo = kolich;
-		profit = kolich * coffee.getcost();
-		for (int i = 0; i < item.getsost()->getlen();i++) {
-			item.getsost()->sost[i].reducekol(item.getsost()->n[i] * kolvo);
-		}soldhist->push_back(*this);		
+	void setsold(Item coffee, unsigned int kolich, vector <sold> soldhist) {
+		this->item = coffee;
+		this->kolvo = kolich;
+		this->profit = kolich * coffee.getcost();
+		for (int i = 0; i < item.getsost().getlen();i++) {
+			item.getsost().sost[i]->reducekol(item.getsost().n[i] * kolvo);
+		}
 	}string soldinfo(vector <sold> soldhist) {
 		int summ=0;
 		string outp = "";
@@ -132,27 +132,28 @@ public:
 class action
 {
 private:
-	resource res;
-	double kolvo;
+	resource *res;
+	int kolvo;
 	int f;
 public:
 	int getacttype() { return f; }
-	void setaction(resource a, unsigned int b, bool flag, vector <action> *acthist) {
-		res = a;
-		kolvo = b;
-		f = flag;
-		acthist->push_back(*this);
+	void setaction(resource *a, int b, int flag, vector <action*> acthist) {
+		this->res = a;
+		this->kolvo = b;
+		this->f = flag;
+		acthist.push_back(this);
 		if (f) {
-			res.upkol(kolvo);
+			res->upkol(kolvo);
 		}
-		else { res.reducekol(kolvo); }
+		else { res->reducekol(kolvo); }
+		//cout << res->showres();
 	}
 	string acthist() {
 		string outp = "";
-		if (this->getacttype() == 1) {
-				outp += res.getname() + ": " + to_string(kolvo) + "\n";
+		if (getacttype()>0) {
+				outp += res->getname() + ": " + to_string(kolvo) + "\n";
 			}
-			else { outp += res.getname() + ": " + to_string(kolvo * (-1)) + "\n"; }
+			else { outp += res->getname() + ": " + to_string(kolvo * (-1)) + "\n"; }
 		return outp;
 	}
 };

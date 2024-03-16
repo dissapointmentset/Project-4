@@ -12,6 +12,8 @@ int main() {
 	std::vector<sold> soldhist = {};
 	resource milk, coffee, sugar, chokolate, sirop;
 	milk.setresource("milk", 30);
+	milk++;
+	++milk;
 	sclad.push_back(milk);
 	chokolate.setresource("chokolate", 200);
 	sclad.push_back(chokolate);
@@ -38,12 +40,12 @@ int main() {
 	menu.push_back(americano);
 	cout << chokolate.showres();
 	cout << milk.showres(); cout << "\n";
-	cout << cappuchino_big.showsost();
+	cout << showsost(cappuchino_big);
 	cout << "\n";
 	cappuchino_big.costchange(220);
 	cappuchino_big.sostdel(1);
 	cappuchino_big.sostadd(&sirop, 0.03);
-	cout << cappuchino_big.showsost();
+	cout << showsost(cappuchino_big);
 	cout << to_string(cappuchino_big.getcost())+"\n";
 
 	sold one, two;
@@ -51,7 +53,8 @@ int main() {
 	soldhist.push_back(one);
 	two.setsold(americano, 7, soldhist);
 	soldhist.push_back(two);
-	cout<<one.soldinfo(soldhist);
+	cout << "Profit: "+to_string(*(one + two)) + "\n";
+	cout<<sold::soldinfo(soldhist);
 	cout << milk.showres();
 	cout << chokolate.showres();
 	cout << "\n";
@@ -59,6 +62,7 @@ int main() {
 	action first, second;
 	first.setaction(&milk, 2, 0, actions);
 	second.setaction(&chokolate, 10, 1, actions);
+	action::postavki();
 	cout << second.acthist();
 	cout << first.acthist(); cout << "\n";
 	cout << milk.showres();

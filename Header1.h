@@ -38,6 +38,14 @@ public:
 	void upkol(double a) {
 		this->kolvo += a;
 	}
+	resource & operator ++() {
+		this->kolvo++;
+		return *this;
+	}
+	resource& operator ++(int num) {
+		this->kolvo++;
+		return *this;
+	}
 };
 
 class compose
@@ -75,12 +83,7 @@ public:
 		this->cost = price;
 		this->sost = n;
 	}
-	string showsost() {
-		string outp="";
-		for (int i = 0; i < this->sost.n.size(); i++) {
-			outp += (this->sost.sost[i]->getname() + ": " + to_string(this->sost.n[i]) + "\n");
-		}return outp;
-	}
+	friend string showsost(Item item); 
 	unsigned int getcost() {
 		return cost;
 	}
@@ -105,7 +108,12 @@ public:
 		}this->sost.reduselen(b);
 	}
 };
-
+string showsost(Item item) {
+	string outp = "";
+	for (int i = 0; i < item.sost.n.size(); i++) {
+		outp += (item.sost.sost[i]->getname() + ": " + to_string(item.sost.n[i]) + "\n");
+	}return outp;
+}
 class sold
 {
 private:
@@ -120,7 +128,7 @@ public:
 		for (int i = 0; i < item.getsost().getlen();i++) {
 			item.getsost().sost[i]->reducekol(item.getsost().n[i] * kolvo);
 		}
-	}string soldinfo(vector <sold> soldhist) {
+	}static string soldinfo(vector <sold> soldhist) {
 		int summ=0;
 		string outp = "";
 		for (int i = 0; i < soldhist.size(); i++) {
@@ -128,35 +136,51 @@ public:
 			summ += soldhist[i].profit;
 		}outp += "profit:" + to_string(summ)+"\n"; return outp;
 	}
+	int* operator +(sold & other){
+		int i;
+		i = this->profit + other.profit;
+		return &i;
+	}
+	
 };
 class action
 {
 private:
-	resource *res;
+	resource* res;
 	int kolvo;
 	int f;
 public:
+	static int count;
+	static int reverscount;
 	int getacttype() { return f; }
-	void setaction(resource *a, int b, int flag, vector <action*> acthist) {
+	void setaction(resource* a, int b, int flag, vector <action*> acthist) {
 		this->res = a;
 		this->kolvo = b;
 		this->f = flag;
 		acthist.push_back(this);
 		if (f) {
 			res->upkol(kolvo);
+			++count;
 		}
-		else { res->reducekol(kolvo); }
+		else { res->reducekol(kolvo); ++reverscount; }
 		//cout << res->showres();
+	}
+	static void postavki() { 
+		cout << "\nPostavki: " + to_string(count)+"\n";
+	}
+	static void spisaniya() {
+		cout << "\nSpisniya: " + to_string(count) + "\n";
 	}
 	string acthist() {
 		string outp = "";
-		if (getacttype()>0) {
-				outp += res->getname() + ": " + to_string(kolvo) + "\n";
-			}
-			else { outp += res->getname() + ": " + to_string(kolvo * (-1)) + "\n"; }
+		if (getacttype() > 0) {
+			outp += res->getname() + ": " + to_string(kolvo) + "\n";
+		}
+		else { outp += res->getname() + ": " + to_string(kolvo * (-1)) + "\n"; }
 		return outp;
 	}
-};
+}; int action::count = 0;
+int action::reverscount = 0;
 //Item inititem(string name, unsigned int cost, compose a);
 //resource initresource(string name, unsigned int kolvo);
 //sold initsold(Item item, unsigned int kolvo);

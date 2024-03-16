@@ -8,12 +8,14 @@ using namespace std;
 int main() {
 	std::vector<resource> sclad = {};
 	std::vector<Item> menu = {};
-	std::vector<action*> actions = {};
-	std::vector<sold> soldhist = {};
+	//std::vector<action*> actions = {};
+	//std::vector<sold> soldhist = {};
+	sold weekly[2][2];
+	action arr[2];
 	resource milk, coffee, sugar, chokolate, sirop;
 	milk.setresource("milk", 30);
-	milk++;
-	++milk;
+	/*milk++;
+	++milk;*/
 	sclad.push_back(milk);
 	chokolate.setresource("chokolate", 200);
 	sclad.push_back(chokolate);
@@ -48,22 +50,23 @@ int main() {
 	cout << showsost(cappuchino_big);
 	cout << to_string(cappuchino_big.getcost())+"\n";
 
-	sold one, two;
-	one.setsold(cappuchino_big, 8, soldhist);
-	soldhist.push_back(one);
-	two.setsold(americano, 7, soldhist);
-	soldhist.push_back(two);
+	sold one, two, three, four;
+	one.setsold(cappuchino_big, 8, (sold*)weekly);
+	two.setsold(americano, 7, (sold*)weekly);
+	//soldhist.push_back(two);
 	cout << "Profit: "+to_string(*(one + two)) + "\n";
-	cout<<sold::soldinfo(soldhist);
+	three.setsold(cappuchino_small, 12, (sold*)weekly);
+	four.setsold(americano, 3, (sold*)weekly);
+	cout<<sold::soldinfo((sold*)weekly, 2, 2);
 	cout << milk.showres();
 	cout << chokolate.showres();
 	cout << "\n";
 
 	action first, second;
-	first.setaction(&milk, 2, 0, actions);
-	second.setaction(&chokolate, 10, 1, actions);
-	action::postavki();
-	cout << second.acthist();
+	first.setaction(&milk, 2, 0, arr);
+	second.setaction(&chokolate, 10, 1, arr);
+	//action::postavki();
+	cout << arr[1].acthist();
 	cout << first.acthist(); cout << "\n";
 	cout << milk.showres();
 	cout << chokolate.showres();

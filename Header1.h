@@ -29,8 +29,22 @@ public:
 	void consresinit() {
 		cout << "Input resource name:";
 		cin >> this->name;
-		cout << "Input resource quantity:";
-		cin >> this->kolvo;
+		bool w;
+		do {cout << "Input resource quantity:";
+		w = true;
+			cin >> this->kolvo;
+			try
+			{
+				if (this->kolvo < 0) {
+					throw exception("Amount of resource can not be lower than 0\n");
+				}
+			}
+			catch (const std::exception& ex)
+			{
+				cout << ex.what();
+				w = false;
+			}
+		} while (!w);
 	}
 	void reducekol(double a) {
 		this->kolvo -= a;
@@ -121,19 +135,20 @@ private:
 	unsigned int kolvo;
 	int profit;
 public:
-	void setsold(Item coffee, unsigned int kolich, vector <sold> soldhist) {
+	static int counter;
+	void setsold(Item coffee, unsigned int kolich, sold *ptr) {
 		this->item = coffee;
 		this->kolvo = kolich;
 		this->profit = kolich * coffee.getcost();
-		for (int i = 0; i < item.getsost().getlen();i++) {
-			item.getsost().sost[i]->reducekol(item.getsost().n[i] * kolvo);
-		}
-	}static string soldinfo(vector <sold> soldhist) {
+		for (int i = 0; i < item.getsost().getlen(); i++) {
+			item.getsost().sost[i]->reducekol(item.getsost().n[i] * kolvo);			
+		}ptr[counter] = *this; counter++;
+	}static string soldinfo(sold *ptr, int str, int cols) {
 		int summ=0;
 		string outp = "";
-		for (int i = 0; i < soldhist.size(); i++) {
-			outp += soldhist[i].item.getname() + ": " + to_string(soldhist[i].kolvo) + " = " + to_string(soldhist[i].profit) + "\n";
-			summ += soldhist[i].profit;
+		for (int i = 0; i < str*cols; i++) {
+			outp += ptr[i].item.getname() + ": " + to_string(ptr[i].kolvo) + " = " + to_string(ptr[i].profit) + "\n";
+			summ += ptr[i].profit;
 		}outp += "profit:" + to_string(summ)+"\n"; return outp;
 	}
 	int* operator +(sold & other){
@@ -142,7 +157,7 @@ public:
 		return &i;
 	}
 	
-};
+}; int sold::counter = 0;
 class action
 {
 private:
@@ -153,17 +168,19 @@ public:
 	static int count;
 	static int reverscount;
 	int getacttype() { return f; }
-	void setaction(resource* a, int b, int flag, vector <action*> acthist) {
+	void setaction(resource* a, int b, int flag, action arr[]) {
 		this->res = a;
 		this->kolvo = b;
 		this->f = flag;
-		acthist.push_back(this);
+		//acthist.push_back(this);
+		arr[count + reverscount] = *this;
 		if (f) {
 			res->upkol(kolvo);
 			++count;
 		}
 		else { res->reducekol(kolvo); ++reverscount; }
 		//cout << res->showres();
+
 	}
 	static void postavki() { 
 		cout << "\nPostavki: " + to_string(count)+"\n";

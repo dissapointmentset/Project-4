@@ -7,32 +7,31 @@
 using namespace std;
 
 class resource {
-private:
+protected:
 	string name;
 	double kolvo;
 public:
+	resource(string imya, double kolich) {
+		this->name = imya;
+		this->kolvo = kolich;
+	}
 	string getname() {
 		return name;
 	}
 	unsigned int getkol() {
 		return kolvo;
 	}
-	void setresource(string imya, double kolich) {
-		name = imya;
-		kolvo = kolich;
-	}
-	string showres() {
-		string outp;
-		outp = this->name + " : " + to_string(this->kolvo) + "\n";
+	ostream& operator <<(ostream& outp) {
+		outp << this->name + " : " + to_string(this->kolvo) + "\n";
 		return outp;
 	}	
-	void consresinit() {
+	virtual void consresinit() {
 		cout << "Input resource name:";
 		cin >> this->name;
 		bool w;
 		do {cout << "Input resource quantity:";
 		w = true;
-			cin >> this->kolvo;
+			cin >> this->kolvo;//try catch блоки для защиты ввода числа
 			try
 			{
 				if (this->kolvo < 0) {
@@ -60,8 +59,67 @@ public:
 		this->kolvo++;
 		return *this;
 	}
+	void operator =(const resource &other) {
+		
+		this->kolvo = other.kolvo;
+		this->name = other.name;
+	}
 };
-
+class lot :public resource {
+private:
+	double cost;
+public:
+	lot(string name, double kolvo, double cost) :resource(name, kolvo) {
+		this->cost = cost;
+	}
+	string getname() {
+		return name;
+	}
+	unsigned int getkol() {
+		return kolvo;
+	}
+	double getcost() {
+		return cost;
+	}
+	ostream& operator <<(ostream& outp) {
+		outp << this->name + " " + to_string(this->cost) + "p : " + to_string(this->kolvo) + "\n";
+		return outp;
+	}
+	void reducekol(double a) {
+		this->kolvo -= a;
+	}
+	void upkol(double a) {
+		this->kolvo += a;
+	}
+	void operator = (const lot &other) {
+		this->kolvo = other.kolvo;
+		this->name = other.name;
+		this->cost = other.cost;
+	}
+	void consresinit() {
+		cout << "Input lot name:";
+		cin >> this->name;
+		bool w;
+		do {
+			cout << "Input number of lots:";
+			w = true;
+			cin >> this->kolvo;
+			try
+			{
+				if (this->kolvo < 0) {
+					throw exception("Amount of resource can not be lower than 0\n");
+				}
+			}
+			catch (const std::exception& ex)
+			{
+				cout << ex.what();
+				w = false;
+			}
+		} while (!w);
+		cout << "Input price: ";
+		cin >> this->cost;
+	}
+};
 class compose
 {
 public:
@@ -84,8 +142,13 @@ public:
 		k+=1;
 	}
 };
-
-class Item
+class absitem {//абстрактный класс
+public :
+	virtual void costchange(unsigned int) = 0;
+	virtual unsigned int getcost() = 0;
+	virtual compose getsost() = 0;
+};
+class Item:public absitem
 {
 private:
 	string name;
@@ -97,20 +160,24 @@ public:
 		this->cost = price;
 		this->sost = n;
 	}
-	friend string showsost(Item item); 
-	unsigned int getcost() {
+	friend string showsost(Item item);
+
+	compose getsost() override
+	{
+		return sost;
+	}
+	unsigned int getcost() override
+	{
 		return cost;
 	}
 	string getname() {
 		return name;
 	}
-	compose getsost() {
-		return sost;
-	}
-	void costchange(unsigned int b) {
+	void costchange(unsigned int b) override {
 		cost = b;
 	}
-	void sostadd( resource *res, double k) {
+	void sostadd(resource* res, double k)
+	{
 		this->sost.sost.push_back(res);
 		this->sost.n.push_back(k);
 		this->sost.uplen();
@@ -121,8 +188,13 @@ public:
 			this->sost.n.pop_back();
 		}this->sost.reduselen(b);
 	}
+	ostream& operator <<(ostream& outp) {
+		outp << showsost(*this) + "\n";
+		return outp;
+	}
+
 };
-string showsost(Item item) {
+string showsost(Item item) {//дружественная функция
 	string outp = "";
 	for (int i = 0; i < item.sost.n.size(); i++) {
 		outp += (item.sost.sost[i]->getname() + ": " + to_string(item.sost.n[i]) + "\n");
@@ -130,63 +202,81 @@ string showsost(Item item) {
 }
 class sold
 {
-private:
-	Item item;
+protected:	
 	unsigned int kolvo;
 	int profit;
+private:
+	Item item;
 public:
 	static int counter;
-	void setsold(Item coffee, unsigned int kolich, sold *ptr) {
+	void setsold(Item coffee, unsigned int kolich, sold* ptr) {
 		this->item = coffee;
 		this->kolvo = kolich;
 		this->profit = kolich * coffee.getcost();
 		for (int i = 0; i < item.getsost().getlen(); i++) {
-			item.getsost().sost[i]->reducekol(item.getsost().n[i] * kolvo);			
+			item.getsost().sost[i]->reducekol(item.getsost().n[i] * kolvo);
 		}ptr[counter] = *this; counter++;
-	}static string soldinfo(sold *ptr, int str, int cols) {
-		int summ=0;
+	}static string soldinfo(sold* ptr, int str, int cols) {
+		int summ = 0;
 		string outp = "";
-		for (int i = 0; i < str*cols; i++) {
+		for (int i = 0; i < str * cols; i++) {
 			outp += ptr[i].item.getname() + ": " + to_string(ptr[i].kolvo) + " = " + to_string(ptr[i].profit) + "\n";
 			summ += ptr[i].profit;
-		}outp += "profit:" + to_string(summ)+"\n"; return outp;
+		}outp += "profit:" + to_string(summ) + "\n"; return outp;
 	}
-	int* operator +(sold & other){
+	int* operator +(sold& other) {
 		int i;
 		i = this->profit + other.profit;
 		return &i;
 	}
-	
-}; int sold::counter = 0;
+
+};
+class solditem :public sold {
+private:
+	lot *obj;
+public:
+	void setsoldlot(lot *coffee, unsigned int kolich) {
+		this->obj = coffee;
+		this->kolvo = kolich;
+		this->profit = kolich * coffee->getcost();
+		coffee->reducekol(kolvo);
+	}
+	static string soldinfo(vector<solditem>ptr) {
+		int summ = 0;
+		string outp = "";
+		//cout <<"\n" + to_string(ptr.size()) + "\n";
+		for (int i = 0; i < ptr.size(); i++) {
+			outp += ptr[i].obj->getname() + ": " + to_string(ptr[i].kolvo) + " = " + to_string(ptr[i].profit) + "\n";
+			summ += ptr[i].profit;
+		}outp += "profit:" + to_string(summ) + "\n"; return outp;
+	}
+};
+int sold::counter = 0;
+
+template<typename T>//шаблон класса
 class action
 {
 private:
 	resource* res;
-	int kolvo;
+protected:
+	T kolvo;
 	int f;
 public:
 	static int count;
-	static int reverscount;
 	int getacttype() { return f; }
-	void setaction(resource* a, int b, int flag, action arr[]) {
+	void setaction(resource* a, T b, int flag, action arr[]) {
 		this->res = a;
 		this->kolvo = b;
 		this->f = flag;
-		//acthist.push_back(this);
-		arr[count + reverscount] = *this;
+		arr[count] = *this;
+		count++;
 		if (f) {
 			res->upkol(kolvo);
-			++count;
 		}
-		else { res->reducekol(kolvo); ++reverscount; }
-		//cout << res->showres();
-
+		else { res->reducekol(kolvo);}
 	}
 	static void postavki() { 
 		cout << "\nPostavki: " + to_string(count)+"\n";
-	}
-	static void spisaniya() {
-		cout << "\nSpisniya: " + to_string(count) + "\n";
 	}
 	string acthist() {
 		string outp = "";
@@ -196,19 +286,40 @@ public:
 		else { outp += res->getname() + ": " + to_string(kolvo * (-1)) + "\n"; }
 		return outp;
 	}
-}; int action::count = 0;
-int action::reverscount = 0;
-//Item inititem(string name, unsigned int cost, compose a);
-//resource initresource(string name, unsigned int kolvo);
-//sold initsold(Item item, unsigned int kolvo);
-//action initaction(resource a, unsigned int b, bool f);
-//compose initcompose(vector<resource> m, vector <unsigned int> n);
-//void showres(vector<resource> m);
-//void showmenu(vector <Item> m);
-//void acthist(vector <action> m);
-//void showing(Item p);
-//void solddata(vector <sold> m);
-//void costchange(Item p, unsigned int b);
-//void sostadd(compose comp, resource r, unsigned int b);
-//void sostdel(compose comp, unsigned int b);
-//resource consresinit();
+	ostream& operator <<(ostream& outp) {
+		outp << this->acthist() + "\n";
+		return outp;
+	}
+}; 
+class actionlot :public action<int> {
+private:
+	lot *item;
+public:
+	static int counter;
+	void setactionitem(lot *a, int b, int flag, vector<actionlot> arr) {
+		this->item = a;
+		this->kolvo = b;
+		this->f = flag;
+		arr.push_back(*this);
+		if (f) {
+			item->upkol(kolvo);
+		}
+		else { item->reducekol(kolvo); }
+	}
+	string acthist() {
+		string outp = "";
+		if (getacttype() > 0) {
+			outp += item->getname() + ": " + to_string(this->kolvo) + "\n";
+		}
+		else { outp += item->getname() + ": " + to_string(this->kolvo * (-1)) + "\n"; }
+		return outp;
+	}
+	ostream& operator <<(ostream& outp) {
+		outp << this->acthist() + "\n";
+		return outp;
+	}
+	static void postavki() {
+		cout << "\nPostavki tovarov : " + to_string(counter) + "\n";
+	}
+}; int action<int>::count = 0;
+int actionlot::counter = 0;

@@ -43,6 +43,7 @@ int main() {
 	lot cake("", 0, 0);
 	resource* p = &cake;//демонстрация виртуальной функции через динамический объект
 	p->consresinit();
+	cake << cout;
 	chockobar << cout;
 	cookie << cout;
 	Item cappuchino_small, cappuchino_big, americano;

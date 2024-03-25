@@ -97,7 +97,8 @@ public:
 		this->cost = other.cost;
 	}
 	void consresinit() {
-		cout << "Input lot name:";
+		resource::consresinit();
+		/*cout << "Input lot name:";
 		cin >> this->name;
 		bool w;
 		do {
@@ -115,7 +116,7 @@ public:
 				cout << ex.what();
 				w = false;
 			}
-		} while (!w);
+		} while (!w);*/
 		cout << "Input price: ";
 		cin >> this->cost;
 	}
